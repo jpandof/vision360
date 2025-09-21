@@ -1,10 +1,5 @@
 import { useState } from 'react';
-import {
-  DndContext,
-  DragEndEvent,
-  DragOverlay,
-  DragStartEvent,
-} from '@dnd-kit/core';
+import { DndContext, DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -18,16 +13,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ProjectCard } from './ProjectCard';
 import { UnassignedDevelopers } from './UnassignedDevelopers';
-import { DraggableDeveloper } from './DraggableDeveloper';
 import { ConfirmationModal } from './ConfirmationModal';
-import { useProjectStore, Developer } from '@/stores/projectStore';
+import { useProjectStore, type Developer } from '@/stores/projectStore';
 
 export default function AdminPanel() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('proyectos');
-  const [activeDeveloper, setActiveDeveloper] = useState<Developer | null>(
-    null
-  );
 
   const {
     projects,
@@ -39,16 +30,13 @@ export default function AdminPanel() {
     getDeveloperProject,
   } = useProjectStore();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleDragStart = (event: DragStartEvent) => {
-    const { active } = event;
-    if (active.data.current?.type === 'developer') {
-      setActiveDeveloper(active.data.current.developer);
-    }
+    // Opcional: lógica adicional si la necesitas
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    setActiveDeveloper(null);
 
     if (!over || !active.data.current?.developer) return;
 
@@ -170,7 +158,13 @@ export default function AdminPanel() {
                           <div className="flex items-center justify-between mb-2">
                             <h4 className="font-medium">{project.name}</h4>
                             <Badge
-                              className={`bg-${project.status === 'activo' ? 'green' : project.status === 'completado' ? 'blue' : 'yellow'}-500`}
+                              className={
+                                project.status === 'activo'
+                                  ? 'bg-green-500 text-white'
+                                  : project.status === 'completado'
+                                    ? 'bg-blue-500 text-white'
+                                    : 'bg-yellow-500 text-white'
+                              }
                             >
                               {project.status}
                             </Badge>
@@ -210,7 +204,13 @@ export default function AdminPanel() {
                               <div className="flex items-center justify-between">
                                 <h4 className="font-medium">{dev.name}</h4>
                                 <Badge
-                                  className={`bg-${dev.status === 'activo' ? 'green' : dev.status === 'disponible' ? 'gray' : 'purple'}-500`}
+                                  className={
+                                    dev.status === 'activo'
+                                      ? 'bg-green-500 text-white'
+                                      : dev.status === 'disponible'
+                                        ? 'bg-gray-500 text-white'
+                                        : 'bg-purple-500 text-white'
+                                  }
                                 >
                                   {dev.status}
                                 </Badge>
@@ -354,13 +354,6 @@ export default function AdminPanel() {
             </div>
           </div>
         </div>
-
-        {/* Drag overlay */}
-        <DragOverlay>
-          {activeDeveloper ? (
-            <DraggableDeveloper developer={activeDeveloper} />
-          ) : null}
-        </DragOverlay>
 
         {/* Modal de confirmación */}
         <ConfirmationModal />

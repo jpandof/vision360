@@ -53,8 +53,8 @@ export function DraggableDeveloper({
       {...listeners}
       {...attributes}
       className={cn(
-        'p-3 cursor-grab active:cursor-grabbing transition-all duration-200',
-        isDragging && 'opacity-50 shadow-lg scale-105',
+        'p-3 cursor-grab active:cursor-grabbing',
+        isDragging && 'shadow-lg bg-white border-blue-500 border-2 z-50',
         isPending && 'ring-2 ring-orange-400 bg-orange-50'
       )}
     >
