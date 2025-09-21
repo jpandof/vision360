@@ -19,7 +19,7 @@ export function UnassignedDevelopers() {
       <div
         ref={setNodeRef}
         className={cn(
-          'h-full bg-white/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-sm transition-all duration-200 overflow-hidden',
+          'h-full bg-white/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-sm transition-all duration-200 overflow-visible',
           isOver && 'border-emerald-300 bg-emerald-50/70 shadow-md'
         )}
       >
@@ -40,7 +40,7 @@ export function UnassignedDevelopers() {
               </span>
               <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-3 overflow-visible">
               {unassignedDevelopers.map(developer => {
                 const pendingInfo = pendingChanges.find(
                   c => c.developerId === developer.id

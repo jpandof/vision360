@@ -3,6 +3,7 @@ import { DragDropArea } from './DragDropArea';
 import { ConfirmationModal } from './ConfirmationModal';
 import { useProjectStore, type Developer } from '@/stores/projectStore';
 import { SidebarProvider } from '@/components/ui/sidebar';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 export default function AdminPanel() {
   const { moveDeveloper, getDeveloperProject } = useProjectStore();
@@ -34,13 +35,15 @@ export default function AdminPanel() {
   };
 
   return (
-    <SidebarProvider>
-      <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div className="h-full">
-          <DragDropArea />
-          <ConfirmationModal />
-        </div>
-      </DndContext>
-    </SidebarProvider>
+    <TooltipProvider>
+      <SidebarProvider>
+        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+          <div className="h-full">
+            <DragDropArea />
+            <ConfirmationModal />
+          </div>
+        </DndContext>
+      </SidebarProvider>
+    </TooltipProvider>
   );
 }

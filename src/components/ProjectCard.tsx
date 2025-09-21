@@ -101,8 +101,8 @@ export function ProjectCard({ project }: ProjectCardProps) {
     <div className="h-full">
       <div
         className={cn(
-          'h-full bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden',
-          isOver && 'border-blue-300 bg-blue-50/70 shadow-lg scale-[1.02]'
+          'h-full bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col',
+          isOver && 'border-blue-400 bg-blue-50'
         )}
       >
         {/* Header más limpio */}
@@ -171,7 +171,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         </div>
 
         {/* Área de desarrolladores */}
-        <div ref={setNodeRef} className="flex-1 p-3 overflow-auto">
+        <div ref={setNodeRef} className="flex-1 p-3">
           {projectDevelopers.length === 0 ? (
             <div className="flex items-center justify-center h-full text-gray-400">
               <div className="text-center">
