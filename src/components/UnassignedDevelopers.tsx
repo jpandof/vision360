@@ -1,5 +1,4 @@
 import { useDroppable } from '@dnd-kit/core';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DeveloperCard } from './DeveloperCard';
 import { useProjectStore } from '@/stores/projectStore';
 import { cn } from '@/lib/utils';
@@ -16,39 +15,32 @@ export function UnassignedDevelopers() {
   });
 
   return (
-    <Card className="h-full flex flex-col">
-      <CardHeader className="pb-1 px-2 pt-2">
-        <CardTitle className="text-xs flex items-center gap-1">
-          <svg
-            className="h-3 w-3"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 20h5v-2a3 3 0 00-5.196-2.121M13 7a4 4 0 11-8 0 4 4 0 018 0zM5 20v-2a7 7 0 0114 0v2"
-            />
-          </svg>
-          Disponibles ({unassignedDevelopers.length})
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="flex-1 pt-0 px-2 pb-2">
-        <div
-          ref={setNodeRef}
-          className={cn(
-            'h-full p-1 border border-dashed border-gray-300 rounded transition-colors overflow-auto',
-            isOver && 'border-green-400 bg-green-50'
-          )}
-        >
-          {unassignedDevelopers.length === 0 ? (
-            <div className="flex items-center justify-center h-12 text-muted-foreground">
-              <p className="text-xs">Todos asignados</p>
+    <div className="h-full">
+      <div
+        ref={setNodeRef}
+        className={cn(
+          'h-full bg-white/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-sm transition-all duration-200 overflow-hidden',
+          isOver && 'border-emerald-300 bg-emerald-50/70 shadow-md'
+        )}
+      >
+        {unassignedDevelopers.length === 0 ? (
+          <div className="flex items-center justify-center h-full text-gray-500">
+            <div className="text-center p-6">
+              <div className="text-2xl mb-2">✨</div>
+              <p className="text-sm font-medium">Todos asignados</p>
+              <p className="text-xs text-gray-400 mt-1">¡Excelente trabajo!</p>
             </div>
-          ) : (
-            <div className="space-y-1">
+          </div>
+        ) : (
+          <div className="p-4">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-xs font-medium text-gray-600">
+                {unassignedDevelopers.length} disponible
+                {unassignedDevelopers.length !== 1 ? 's' : ''}
+              </span>
+              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+            </div>
+            <div className="space-y-3">
               {unassignedDevelopers.map(developer => {
                 const pendingInfo = pendingChanges.find(
                   c => c.developerId === developer.id
@@ -64,9 +56,9 @@ export function UnassignedDevelopers() {
                 );
               })}
             </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
