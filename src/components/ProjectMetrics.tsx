@@ -10,7 +10,7 @@ export function ProjectMetrics() {
   ).length;
   const availableDevelopers = totalDevelopers - assignedDevelopers;
 
-  // Calcular proyectos con deadlines próximos
+  // Calcular proyectos urgentes
   const urgentProjects = projects.filter(project => {
     const deadline = new Date(project.deadline);
     const now = new Date();
@@ -19,13 +19,23 @@ export function ProjectMetrics() {
     return diffDays <= 7 && diffDays > 0 && project.status === 'activo';
   }).length;
 
-  const understaffedProjects = projects.filter(
-    project => project.developerIds.length === 0 && project.status === 'activo'
+  // Nuevas métricas de desarrolladores
+  const excellentDevelopers = developers.filter(
+    dev => dev.performance === 'excellent'
+  ).length;
+  const needsImprovementDevelopers = developers.filter(
+    dev => dev.performance === 'needs-improvement'
+  ).length;
+  const staffLevel = developers.filter(
+    dev =>
+      dev.seniority === 'staff' ||
+      dev.role === 'staff-engineer' ||
+      dev.role === 'tech-lead'
   ).length;
 
   const metrics = [
     {
-      label: 'Proyectos Activos',
+      label: 'Activos',
       value: activeProjects,
       color: 'text-emerald-600',
       bgColor: 'bg-emerald-50',
@@ -39,6 +49,20 @@ export function ProjectMetrics() {
       icon: '👥',
     },
     {
+      label: 'Top Performers',
+      value: excellentDevelopers,
+      color: 'text-green-600',
+      bgColor: 'bg-green-50',
+      icon: '🌟',
+    },
+    {
+      label: 'Staff/Leads',
+      value: staffLevel,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50',
+      icon: '👑',
+    },
+    {
       label: 'Urgentes',
       value: urgentProjects,
       color: urgentProjects > 0 ? 'text-amber-600' : 'text-gray-400',
@@ -46,24 +70,25 @@ export function ProjectMetrics() {
       icon: '⚡',
     },
     {
-      label: 'Sin Equipo',
-      value: understaffedProjects,
-      color: understaffedProjects > 0 ? 'text-red-500' : 'text-gray-400',
-      bgColor: understaffedProjects > 0 ? 'bg-red-50' : 'bg-gray-50',
+      label: 'Tarjeta Amarilla',
+      value: needsImprovementDevelopers,
+      color:
+        needsImprovementDevelopers > 0 ? 'text-yellow-600' : 'text-gray-400',
+      bgColor: needsImprovementDevelopers > 0 ? 'bg-yellow-50' : 'bg-gray-50',
       icon: '⚠️',
     },
   ];
 
   return (
-    <div className="grid grid-cols-4 gap-2">
+    <div className="grid grid-cols-3 gap-2">
       {metrics.map((metric, index) => (
         <div
           key={index}
-          className={`${metric.bgColor} rounded-xl p-3 border border-white/50 shadow-sm`}
+          className={`${metric.bgColor} rounded-xl p-2 border border-white/50 shadow-sm`}
         >
           <div className="flex items-center justify-between mb-1">
-            <span className="text-lg">{metric.icon}</span>
-            <span className={`text-lg font-bold ${metric.color}`}>
+            <span className="text-sm">{metric.icon}</span>
+            <span className={`text-sm font-bold ${metric.color}`}>
               {metric.value}
             </span>
           </div>

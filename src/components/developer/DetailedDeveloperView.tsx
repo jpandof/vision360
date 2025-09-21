@@ -44,6 +44,55 @@ export function DetailedDeveloperView({
     }
   };
 
+  const getRoleIcon = (role: string) => {
+    switch (role) {
+      case 'developer':
+        return '💻';
+      case 'tech-lead':
+        return '🎯';
+      default:
+        return '💻';
+    }
+  };
+
+  const getFunctionIcon = (functionType: string) => {
+    switch (functionType) {
+      case 'squad-lead':
+        return '👑';
+      case 'staff-engineer':
+        return '⭐';
+      default:
+        return '';
+    }
+  };
+
+  const getFunctionLabel = (functionType: string) => {
+    switch (functionType) {
+      case 'squad-lead':
+        return 'Squad Lead';
+      case 'staff-engineer':
+        return 'Staff Engineer';
+      default:
+        return '';
+    }
+  };
+
+  // Determinar el estilo del borde basado en performance
+  const getPerformanceBorderStyle = (performance: string) => {
+    switch (performance) {
+      case 'excellent':
+        return 'border-2 border-green-400 bg-green-50';
+      case 'needs-improvement':
+        return 'border-2 border-yellow-400 bg-yellow-50';
+      default:
+        return 'border border-gray-200 bg-gray-50';
+    }
+  };
+
+  // Determinar si es líder
+  const isLeader =
+    developer.role === 'tech-lead' || developer.functions.length > 0;
+
   // Obtener información del proyecto actual
   const currentProject = projects.find(project =>
     project.developerIds.includes(developer.id)
@@ -74,23 +123,53 @@ export function DetailedDeveloperView({
       {...listeners}
       {...attributes}
       className={cn(
-        'relative group cursor-grab active:cursor-grabbing transition-all duration-200 hover:scale-105 p-3 border rounded-md bg-gray-50 text-gray-700 w-64',
+        'relative group cursor-grab active:cursor-grabbing transition-all duration-200 hover:scale-105 p-3 rounded-md text-gray-700 w-64',
         isDragging && 'shadow-xl scale-110 z-50',
-        isPending && 'ring-4 ring-orange-400'
+        isPending && 'ring-4 ring-orange-400',
+        getPerformanceBorderStyle(developer.performance)
       )}
     >
-      <div className="flex items-center gap-3 mb-2">
-        <Avatar className="h-12 w-12 border-2 border-white shadow-lg">
-          <AvatarImage
-            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${developer.name}`}
-          />
-          <AvatarFallback className="text-sm font-semibold">
-            {developer.name
-              .split(' ')
-              .map(n => n[0])
-              .join('')}
-          </AvatarFallback>
-        </Avatar>
+      {/* Header con avatar y indicadores */}
+      <div className="flex items-center gap-3 mb-3">
+        <div className="relative">
+          <Avatar className="h-12 w-12 border-2 border-white shadow-lg">
+            <AvatarImage
+              src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${developer.name}`}
+            />
+            <AvatarFallback className="text-sm font-semibold">
+              {developer.name
+                .split(' ')
+                .map(n => n[0])
+                .join('')}
+            </AvatarFallback>
+          </Avatar>
+
+          {/* Badge de performance o liderazgo */}
+          {developer.performance === 'excellent' && (
+            <div className="absolute -top-1 -right-1 bg-green-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs font-bold">
+              ⭐
+            </div>
+          )}
+
+          {developer.performance === 'needs-improvement' && (
+            <div className="absolute -top-1 -right-1 bg-yellow-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs font-bold">
+              ⚠️
+            </div>
+          )}
+
+          {isLeader &&
+            developer.performance !== 'excellent' &&
+            developer.performance !== 'needs-improvement' && (
+              <div className="absolute -top-1 -right-1 bg-purple-600 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs">
+                {developer.role === 'tech-lead'
+                  ? getRoleIcon(developer.role)
+                  : developer.functions.includes('squad-lead')
+                    ? getFunctionIcon('squad-lead')
+                    : getFunctionIcon('staff-engineer')}
+              </div>
+            )}
+        </div>
+
         <div className="flex-1">
           <div className="font-bold text-sm">{developer.name}</div>
           <div className="text-xs text-gray-500">{developer.email}</div>
@@ -107,12 +186,64 @@ export function DetailedDeveloperView({
         </div>
       </div>
 
-      {/* Proyecto actual */}
+      {/* Información profesional */}
+      <div className="grid grid-cols-2 gap-2 mb-3 text-xs">
+        <div>
+          <div className="font-medium text-gray-600">
+            {getRoleIcon(developer.role)} {developer.role}
+          </div>
+          <div className="text-gray-500">
+            {developer.seniority} • {developer.yearsOfExperience}y
+          </div>
+        </div>
+        <div>
+          <div className="font-medium text-gray-600">Performance</div>
+          <div
+            className={cn(
+              'capitalize font-medium',
+              developer.performance === 'excellent' && 'text-green-600',
+              developer.performance === 'needs-improvement' &&
+                'text-yellow-600',
+              developer.performance === 'good' && 'text-blue-600',
+              developer.performance === 'average' && 'text-gray-600'
+            )}
+          >
+            {developer.performance}
+          </div>
+        </div>
+      </div>
+
+      {/* Funciones especiales */}
+      {developer.functions.length > 0 && (
+        <div className="mb-3">
+          <div className="text-xs font-medium text-purple-600 mb-1">
+            🎖️ Funciones:
+          </div>
+          <div className="flex flex-wrap gap-1">
+            {developer.functions.map(func => (
+              <Badge
+                key={func}
+                className="bg-purple-100 text-purple-700 hover:bg-purple-200 text-xs py-0 px-2"
+              >
+                {getFunctionIcon(func)} {getFunctionLabel(func)}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Proyecto actual con información de Squad Lead */}
       {currentProject && (
-        <div className="mb-2 p-2 bg-blue-50 rounded border-l-2 border-blue-400">
+        <div className="mb-3 p-2 bg-blue-50 rounded border-l-2 border-blue-400">
           <div className="text-xs font-medium text-blue-700">
             📋 {currentProject.name}
           </div>
+          {currentProject.squadLeadId === developer.id && (
+            <div className="text-xs text-purple-600 mt-1 flex items-center gap-1">
+              👑{' '}
+              <span className="font-semibold">Squad Lead de este proyecto</span>
+            </div>
+          )}
           {skillsCompatibility && (
             <div className="text-xs text-green-600 mt-1">
               🎯 Match: {skillsCompatibility.percentage}% (

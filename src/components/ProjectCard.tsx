@@ -8,9 +8,14 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project }: ProjectCardProps) {
-  const { getProjectDevelopers, pendingChanges, developers } =
-    useProjectStore();
+  const {
+    getProjectDevelopers,
+    pendingChanges,
+    developers,
+    getProjectSquadLead,
+  } = useProjectStore();
   const projectDevelopers = getProjectDevelopers(project.id);
+  const squadLead = getProjectSquadLead(project.id);
 
   const { isOver, setNodeRef } = useDroppable({
     id: project.id,
@@ -108,9 +113,26 @@ export function ProjectCard({ project }: ProjectCardProps) {
         {/* Header más limpio */}
         <div className="p-4 border-b border-gray-100/50">
           <div className="flex items-start justify-between mb-3">
-            <h3 className="font-semibold text-gray-900 text-base leading-tight">
-              {project.name}
-            </h3>
+            <div className="flex-1">
+              <h3 className="font-semibold text-gray-900 text-base leading-tight mb-1">
+                {project.name}
+              </h3>
+              {/* Squad Lead del proyecto */}
+              {squadLead ? (
+                <div className="flex items-center gap-1 text-xs text-purple-600">
+                  <span className="text-purple-500">👑</span>
+                  <span className="font-medium">Squad Lead:</span>
+                  <span className="font-semibold">
+                    {squadLead.name.split(' ')[0]}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1 text-xs text-gray-400">
+                  <span>👑</span>
+                  <span>Sin Squad Lead asignado</span>
+                </div>
+              )}
+            </div>
             <div
               className={`px-2 py-1 rounded-full ${statusColors.bg} flex items-center gap-1`}
             >

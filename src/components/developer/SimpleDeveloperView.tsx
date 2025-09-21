@@ -1,5 +1,4 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import {
   Tooltip,
   TooltipContent,
@@ -50,6 +49,63 @@ export function SimpleDeveloperView({
     }
   };
 
+  const getRoleIcon = (role: string) => {
+    switch (role) {
+      case 'developer':
+        return '💻';
+      case 'tech-lead':
+        return '🎯';
+      default:
+        return '💻';
+    }
+  };
+
+  const getFunctionIcon = (functionType: string) => {
+    switch (functionType) {
+      case 'squad-lead':
+        return '👑';
+      case 'staff-engineer':
+        return '⭐';
+      default:
+        return '';
+    }
+  };
+
+  const getFunctionLabel = (functionType: string) => {
+    switch (functionType) {
+      case 'squad-lead':
+        return 'SQUAD LEAD';
+      case 'staff-engineer':
+        return 'STAFF ENGINEER';
+      default:
+        return '';
+    }
+  };
+
+  // Determinar el estilo visual principal basado en performance
+  const getPerformanceStyle = (performance: string) => {
+    switch (performance) {
+      case 'excellent':
+        return {
+          border: 'ring-2 ring-green-400 shadow-green-200 shadow-lg',
+          avatar: 'border-2 border-green-400',
+          glow: true,
+        };
+      case 'needs-improvement':
+        return {
+          border: 'ring-2 ring-yellow-400 shadow-yellow-200 shadow-lg',
+          avatar: 'border-2 border-yellow-400',
+          glow: true,
+        };
+      default:
+        return {
+          border: '',
+          avatar: 'border border-gray-200',
+          glow: false,
+        };
+    }
+  };
+
   // Obtener información del proyecto actual
   const currentProject = projects.find(project =>
     project.developerIds.includes(developer.id)
@@ -71,6 +127,11 @@ export function SimpleDeveloperView({
   };
 
   const skillsCompatibility = getSkillsCompatibility();
+  const performanceStyle = getPerformanceStyle(developer.performance);
+
+  // Determinar si es líder basado en rol o funciones
+  const isLeader =
+    developer.role === 'tech-lead' || developer.functions.length > 0;
 
   return (
     <Tooltip>
@@ -81,38 +142,68 @@ export function SimpleDeveloperView({
           {...listeners}
           {...attributes}
           className={cn(
-            'relative group cursor-grab active:cursor-grabbing transition-all duration-200 hover:scale-105',
+            'relative cursor-grab active:cursor-grabbing transition-all duration-200 hover:scale-105 flex flex-col items-center p-1',
             isDragging && 'shadow-xl scale-110 z-50',
-            isPending && 'ring-4 ring-orange-400'
+            isPending && 'ring-2 ring-orange-400',
+            performanceStyle.border
           )}
         >
-          {/* Avatar principal */}
+          {/* Avatar simplificado con indicadores claros */}
           <div className="relative">
-            <Avatar className="h-16 w-16 border-2 border-white shadow-lg">
+            <Avatar
+              className={cn('h-10 w-10 shadow-md', performanceStyle.avatar)}
+            >
               <AvatarImage
                 src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${developer.name}`}
               />
-              <AvatarFallback className="text-sm font-semibold">
+              <AvatarFallback className="text-xs font-semibold">
                 {developer.name
                   .split(' ')
                   .map(n => n[0])
                   .join('')}
               </AvatarFallback>
             </Avatar>
-            {/* Badge de status */}
-            <Badge
+
+            {/* Solo UN indicador principal: Performance o Role */}
+            {developer.performance === 'excellent' && (
+              <div className="absolute -top-1 -right-1 bg-green-500 text-white rounded-full h-4 w-4 flex items-center justify-center text-xs font-bold">
+                ⭐
+              </div>
+            )}
+
+            {developer.performance === 'needs-improvement' && (
+              <div className="absolute -top-1 -right-1 bg-yellow-500 text-white rounded-full h-4 w-4 flex items-center justify-center text-xs font-bold">
+                ⚠️
+              </div>
+            )}
+
+            {/* Badge púrpura para líderes (Tech Lead o funciones especiales) cuando no hay performance destacada */}
+            {isLeader &&
+              developer.performance !== 'excellent' &&
+              developer.performance !== 'needs-improvement' && (
+                <div className="absolute -top-1 -right-1 bg-purple-600 text-white rounded-full h-4 w-4 flex items-center justify-center text-xs">
+                  {developer.role === 'tech-lead'
+                    ? getRoleIcon(developer.role)
+                    : developer.functions.includes('squad-lead')
+                      ? getFunctionIcon('squad-lead')
+                      : getFunctionIcon('staff-engineer')}
+                </div>
+              )}
+
+            {/* Indicador de status discreto abajo */}
+            <div
               className={cn(
-                'absolute -top-1 -right-1 h-4 w-4 p-0 text-xs border-2 border-white',
+                'absolute -bottom-0.5 left-1/2 transform -translate-x-1/2 h-1.5 w-6 rounded-full',
                 getStatusColor(developer.status)
               )}
               title={developer.status}
             />
           </div>
 
-          {/* Nombre debajo del avatar */}
-          <div className="mt-2 text-center">
-            <div className="text-xs font-medium text-gray-700 leading-tight max-w-[80px]">
-              {developer.name}
+          {/* Nombre compacto */}
+          <div className="mt-1.5 text-center w-14">
+            <div className="text-xs font-medium text-gray-700 leading-tight truncate">
+              {developer.name.split(' ')[0]}
             </div>
           </div>
         </div>
@@ -120,45 +211,111 @@ export function SimpleDeveloperView({
 
       <TooltipContent
         side="top"
-        className="max-w-xs bg-black text-white border-gray-700 shadow-2xl"
+        className="max-w-sm bg-gray-900 text-white border-gray-700 shadow-2xl"
         sideOffset={8}
       >
-        <div className="space-y-2">
-          <div className="font-semibold text-sm">{developer.name}</div>
-          <div className="text-gray-300">{developer.email}</div>
-          <div className="text-gray-300">Estado: {developer.status}</div>
+        <div className="space-y-3">
+          {/* Header con performance destacada */}
+          <div className="flex items-center justify-between">
+            <div className="font-semibold text-base">{developer.name}</div>
+            <div className="flex items-center gap-2">
+              {developer.performance === 'excellent' && (
+                <div className="flex items-center gap-1 bg-green-600 px-2 py-1 rounded-full">
+                  <span className="text-xs">🌟</span>
+                  <span className="text-xs font-bold">TOP PERFORMER</span>
+                </div>
+              )}
+              {developer.performance === 'needs-improvement' && (
+                <div className="flex items-center gap-1 bg-yellow-600 px-2 py-1 rounded-full">
+                  <span className="text-xs">⚠️</span>
+                  <span className="text-xs font-bold">NECESITA MEJORA</span>
+                </div>
+              )}
+            </div>
+          </div>
 
-          {/* Proyecto actual */}
+          <div className="text-gray-300 text-sm">{developer.email}</div>
+
+          {/* Información profesional simplificada */}
+          <div className="grid grid-cols-2 gap-3 border-t border-gray-700 pt-3">
+            <div>
+              <div className="text-blue-400 font-medium text-sm">
+                💼 {getRoleIcon(developer.role)} {developer.role}
+              </div>
+              <div className="text-gray-300 text-xs">
+                {developer.seniority} • {developer.yearsOfExperience} años
+              </div>
+            </div>
+            <div>
+              <div className="text-yellow-400 font-medium text-sm">
+                📈 Performance
+              </div>
+              <div className="text-white text-xs capitalize">
+                {developer.performance}
+              </div>
+            </div>
+          </div>
+
+          {/* Funciones especiales */}
+          {developer.functions.length > 0 && (
+            <div className="border-t border-gray-700 pt-3">
+              <div className="text-purple-400 font-medium text-sm mb-2">
+                🎖️ Funciones:
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {developer.functions.map(func => (
+                  <div
+                    key={func}
+                    className="flex items-center gap-1 bg-purple-600 px-2 py-1 rounded-full"
+                  >
+                    <span className="text-xs">{getFunctionIcon(func)}</span>
+                    <span className="text-xs font-bold">
+                      {getFunctionLabel(func)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Proyecto actual con información de Squad Lead */}
           {currentProject && (
-            <div className="border-t border-gray-600 pt-2">
-              <div className="text-blue-300 font-medium">
+            <div className="border-t border-gray-700 pt-3">
+              <div className="text-green-400 font-medium text-sm">
                 📋 {currentProject.name}
               </div>
+              {currentProject.squadLeadId === developer.id && (
+                <div className="text-purple-300 text-xs mt-1 flex items-center gap-1">
+                  👑{' '}
+                  <span className="font-semibold">
+                    Squad Lead de este proyecto
+                  </span>
+                </div>
+              )}
               {skillsCompatibility && (
-                <div className="text-green-300 text-xs">
-                  🎯 Compatibilidad: {skillsCompatibility.matching}/
-                  {skillsCompatibility.total} skills (
-                  {skillsCompatibility.percentage}%)
+                <div className="text-emerald-300 text-xs mt-1">
+                  🎯 Compatibilidad: {skillsCompatibility.percentage}% (
+                  {skillsCompatibility.matching}/{skillsCompatibility.total})
                 </div>
               )}
             </div>
           )}
 
           {/* Skills */}
-          <div className="border-t border-gray-600 pt-2">
-            <div className="text-yellow-300 font-medium text-xs">
-              🛠️ Skills principales:
+          <div className="border-t border-gray-700 pt-3">
+            <div className="text-orange-400 font-medium text-sm">
+              🛠️ Skills:
             </div>
-            <div className="text-gray-300 text-xs">
-              {developer.skills.slice(0, 4).join(', ')}
-              {developer.skills.length > 4 &&
-                ` +${developer.skills.length - 4} más`}
+            <div className="text-gray-300 text-xs mt-1">
+              {developer.skills.slice(0, 5).join(', ')}
+              {developer.skills.length > 5 &&
+                ` +${developer.skills.length - 5} más`}
             </div>
           </div>
 
           {/* Información de cambios pendientes */}
           {isPending && (
-            <div className="text-orange-300 font-medium text-xs border-t border-gray-600 pt-2">
+            <div className="bg-orange-600 px-3 py-2 rounded-lg text-white font-medium text-xs">
               🔄{' '}
               {pendingFromProject && pendingToProject
                 ? `${pendingFromProject} → ${pendingToProject}`
