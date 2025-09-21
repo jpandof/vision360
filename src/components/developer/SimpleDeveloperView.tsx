@@ -4,6 +4,7 @@ import { type Developer } from '@/stores/projectStore';
 import { cn } from '@/lib/utils';
 import { type DraggableAttributes } from '@dnd-kit/core';
 import { type SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
+import { useProjectStore } from '@/stores/projectStore';
 
 interface SimpleDeveloperViewProps {
   developer: Developer;
@@ -28,6 +29,8 @@ export function SimpleDeveloperView({
   listeners,
   attributes,
 }: SimpleDeveloperViewProps) {
+  const { projects } = useProjectStore();
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'activo':
@@ -40,6 +43,28 @@ export function SimpleDeveloperView({
         return 'bg-gray-500';
     }
   };
+
+  // Obtener información del proyecto actual
+  const currentProject = projects.find(project =>
+    project.developerIds.includes(developer.id)
+  );
+
+  // Calcular compatibilidad con skills
+  const getSkillsCompatibility = () => {
+    if (!currentProject) return null;
+    const matchingSkills = developer.skills.filter(skill =>
+      currentProject.requiredSkills.includes(skill)
+    );
+    return {
+      matching: matchingSkills.length,
+      total: currentProject.requiredSkills.length,
+      percentage: Math.round(
+        (matchingSkills.length / currentProject.requiredSkills.length) * 100
+      ),
+    };
+  };
+
+  const skillsCompatibility = getSkillsCompatibility();
 
   return (
     <div
@@ -75,16 +100,44 @@ export function SimpleDeveloperView({
           title={developer.status}
         />
       </div>
-      {/* Tooltip con información completa */}
-      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-        <div className="font-semibold">{developer.name}</div>
+      {/* Tooltip con información completa y útil */}
+      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10 min-w-[250px]">
+        <div className="font-semibold text-sm">{developer.name}</div>
         <div className="text-gray-300">{developer.email}</div>
-        <div className="text-gray-300">
-          {developer.skills.slice(0, 3).join(', ')}
-          {developer.skills.length > 3 && ` +${developer.skills.length - 3}`}
+        <div className="text-gray-300 mb-2">Estado: {developer.status}</div>
+
+        {/* Proyecto actual */}
+        {currentProject && (
+          <div className="mb-2 pb-2 border-b border-gray-600">
+            <div className="text-blue-300 font-medium">
+              📋 {currentProject.name}
+            </div>
+            {skillsCompatibility && (
+              <div className="text-green-300">
+                🎯 Compatibilidad: {skillsCompatibility.matching}/
+                {skillsCompatibility.total} skills (
+                {skillsCompatibility.percentage}%)
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Skills */}
+        <div className="mb-2">
+          <div className="text-yellow-300 font-medium">
+            🛠️ Skills principales:
+          </div>
+          <div className="text-gray-300">
+            {developer.skills.slice(0, 4).join(', ')}
+            {developer.skills.length > 4 &&
+              ` +${developer.skills.length - 4} más`}
+          </div>
         </div>
+
+        {/* Información de cambios pendientes */}
         {isPending && (
-          <div className="text-orange-300 font-medium mt-1">
+          <div className="text-orange-300 font-medium mt-2 pt-2 border-t border-gray-600">
+            🔄{' '}
             {pendingFromProject && pendingToProject
               ? `${pendingFromProject} → ${pendingToProject}`
               : pendingFromProject
@@ -94,13 +147,14 @@ export function SimpleDeveloperView({
                   : 'Cambio pendiente'}
           </div>
         )}
+
         {/* Flecha del tooltip */}
         <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-black"></div>
       </div>
       {/* Nombre debajo del avatar */}
       <div className="mt-2 text-center">
-        <div className="text-xs font-medium text-gray-700 truncate max-w-[70px]">
-          {developer.name.split(' ')[0]}
+        <div className="text-xs font-medium text-gray-700 leading-tight max-w-[80px]">
+          {developer.name}
         </div>
       </div>
     </div>

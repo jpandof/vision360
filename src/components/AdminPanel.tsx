@@ -2,7 +2,6 @@ import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { Sidebar } from './Sidebar';
 import { ProjectHeader } from './ProjectHeader';
 import { DragDropArea } from './DragDropArea';
-import { ProjectStatistics } from './ProjectStatistics';
 import { ConfirmationModal } from './ConfirmationModal';
 import { useProjectStore, type Developer } from '@/stores/projectStore';
 
@@ -37,16 +36,15 @@ export default function AdminPanel() {
 
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="min-h-screen bg-gray-50">
+      <div className="h-full flex flex-col">
         <Sidebar />
 
-        {/* Contenido principal ocupando todo el ancho */}
-        <div className="w-full p-6">
-          <div className="w-full max-w-none">
+        {/* Contenido principal ocupando todo el ancho y altura disponible */}
+        <div className="flex-1 p-4 overflow-auto">
+          <div className="h-full flex flex-col">
             <ProjectHeader />
-            <DragDropArea />
-            <div className="mt-8">
-              <ProjectStatistics />
+            <div className="flex-1 overflow-auto">
+              <DragDropArea />
             </div>
           </div>
         </div>

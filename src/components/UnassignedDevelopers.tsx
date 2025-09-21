@@ -16,11 +16,11 @@ export function UnassignedDevelopers() {
   });
 
   return (
-    <Card className="h-full">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg flex items-center gap-2">
+    <Card className="h-full flex flex-col">
+      <CardHeader className="pb-1 px-2 pt-2">
+        <CardTitle className="text-xs flex items-center gap-1">
           <svg
-            className="h-5 w-5"
+            className="h-3 w-3"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -29,49 +29,26 @@ export function UnassignedDevelopers() {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+              d="M17 20h5v-2a3 3 0 00-5.196-2.121M13 7a4 4 0 11-8 0 4 4 0 018 0zM5 20v-2a7 7 0 0114 0v2"
             />
           </svg>
-          Desarrolladores Disponibles
+          Disponibles ({unassignedDevelopers.length})
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          {unassignedDevelopers.length} desarrolladores sin asignar
-        </p>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1 pt-0 px-2 pb-2">
         <div
           ref={setNodeRef}
           className={cn(
-            'min-h-[200px] p-4 border-2 border-dashed border-gray-200 rounded-lg transition-colors',
+            'h-full p-1 border border-dashed border-gray-300 rounded transition-colors overflow-auto',
             isOver && 'border-green-400 bg-green-50'
           )}
         >
           {unassignedDevelopers.length === 0 ? (
-            <div className="flex items-center justify-center h-32 text-muted-foreground">
-              <div className="text-center">
-                <svg
-                  className="h-12 w-12 mx-auto mb-2 opacity-50"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <p className="text-sm">
-                  Todos los desarrolladores están asignados
-                </p>
-                <p className="text-xs">
-                  Arrastra desarrolladores aquí para desasignarlos
-                </p>
-              </div>
+            <div className="flex items-center justify-center h-12 text-muted-foreground">
+              <p className="text-xs">Todos asignados</p>
             </div>
           ) : (
-            <div className="flex flex-wrap gap-4">
+            <div className="space-y-1">
               {unassignedDevelopers.map(developer => {
                 const pendingInfo = pendingChanges.find(
                   c => c.developerId === developer.id

@@ -8,8 +8,8 @@ function Header() {
   const showSimpleView = useProjectStore(state => state.showSimpleView);
   const setShowSimpleView = useProjectStore(state => state.setShowSimpleView);
   return (
-    <header className="w-full flex items-center justify-between px-6 py-4 bg-white border-b mb-4">
-      <h1 className="text-2xl font-bold">Vision360</h1>
+    <header className="w-full flex items-center justify-between px-4 py-1 bg-white border-b flex-shrink-0">
+      <h1 className="text-lg font-bold">Vision360</h1>
       <Toggle
         pressed={showSimpleView}
         onPressedChange={setShowSimpleView}
@@ -17,7 +17,7 @@ function Header() {
         size="sm"
         aria-label="Vista simplificada"
       >
-        {showSimpleView ? 'Simplificada' : 'Detallada'}
+        {showSimpleView ? 'Simple' : 'Detallada'}
       </Toggle>
     </header>
   );
@@ -25,10 +25,12 @@ function Header() {
 
 function App() {
   return (
-    <>
+    <div className="h-screen flex flex-col">
       <Header />
-      <AdminPanel />
-    </>
+      <div className="flex-1 overflow-hidden">
+        <AdminPanel />
+      </div>
+    </div>
   );
 }
 
