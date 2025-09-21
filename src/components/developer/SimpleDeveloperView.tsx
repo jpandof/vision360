@@ -87,21 +87,15 @@ export function SimpleDeveloperView({
     switch (performance) {
       case 'excellent':
         return {
-          border: 'ring-2 ring-green-400 shadow-green-200 shadow-lg',
           avatar: 'border-2 border-green-400',
-          glow: true,
         };
       case 'needs-improvement':
         return {
-          border: 'ring-2 ring-yellow-400 shadow-yellow-200 shadow-lg',
           avatar: 'border-2 border-yellow-400',
-          glow: true,
         };
       default:
         return {
-          border: '',
           avatar: 'border border-gray-200',
-          glow: false,
         };
     }
   };
@@ -144,8 +138,7 @@ export function SimpleDeveloperView({
           className={cn(
             'relative cursor-grab active:cursor-grabbing transition-all duration-200 hover:scale-105 flex flex-col items-center p-1',
             isDragging && 'shadow-xl scale-110 z-50',
-            isPending && 'ring-2 ring-orange-400',
-            performanceStyle.border
+            isPending && 'ring-2 ring-orange-400'
           )}
         >
           {/* Avatar simplificado con indicadores claros */}

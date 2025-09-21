@@ -81,11 +81,23 @@ export function DetailedDeveloperView({
   const getPerformanceBorderStyle = (performance: string) => {
     switch (performance) {
       case 'excellent':
-        return 'border-2 border-green-400 bg-green-50';
+        return 'border border-gray-200 bg-gray-50';
       case 'needs-improvement':
-        return 'border-2 border-yellow-400 bg-yellow-50';
+        return 'border border-gray-200 bg-gray-50';
       default:
         return 'border border-gray-200 bg-gray-50';
+    }
+  };
+
+  // Determinar el estilo del avatar basado en performance
+  const getAvatarPerformanceStyle = (performance: string) => {
+    switch (performance) {
+      case 'excellent':
+        return 'border-2 border-green-400';
+      case 'needs-improvement':
+        return 'border-2 border-yellow-400';
+      default:
+        return 'border-2 border-white';
     }
   };
 
@@ -132,7 +144,12 @@ export function DetailedDeveloperView({
       {/* Header con avatar y indicadores */}
       <div className="flex items-center gap-3 mb-3">
         <div className="relative">
-          <Avatar className="h-12 w-12 border-2 border-white shadow-lg">
+          <Avatar
+            className={cn(
+              'h-12 w-12 shadow-lg',
+              getAvatarPerformanceStyle(developer.performance)
+            )}
+          >
             <AvatarImage
               src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${developer.name}`}
             />
