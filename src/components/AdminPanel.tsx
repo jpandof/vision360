@@ -37,11 +37,12 @@ export default function AdminPanel() {
 
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="min-h-screen bg-gray-50 flex">
+      <div className="min-h-screen bg-gray-50">
         <Sidebar />
 
-        <div className="flex-1 p-8 ml-16">
-          <div className="max-w-7xl mx-auto">
+        {/* Contenido principal ocupando todo el ancho */}
+        <div className="w-full p-6">
+          <div className="w-full max-w-none">
             <ProjectHeader />
             <DragDropArea />
             <div className="mt-8">

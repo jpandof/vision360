@@ -2,7 +2,7 @@ import { useDroppable } from '@dnd-kit/core';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { DraggableDeveloper } from './DraggableDeveloper';
+import { DeveloperCard } from './DeveloperCard';
 import { useProjectStore, type Project } from '@/stores/projectStore';
 import { cn } from '@/lib/utils';
 
@@ -71,23 +71,23 @@ export function ProjectCard({ project }: ProjectCardProps) {
         <div
           ref={setNodeRef}
           className={cn(
-            'min-h-[200px] p-3 border-2 border-dashed border-gray-200 rounded-lg transition-colors',
+            'min-h-[180px] p-4 border-2 border-dashed border-gray-200 rounded-lg transition-colors',
             isOver && 'border-blue-400 bg-blue-50'
           )}
         >
-          <div className="space-y-2">
-            {developers.length === 0 ? (
-              <div className="flex items-center justify-center h-32 text-muted-foreground">
-                <div className="text-center">
-                  <p className="text-sm">Sin desarrolladores asignados</p>
-                  <p className="text-xs">Arrastra desarrolladores aquí</p>
-                </div>
+          {developers.length === 0 ? (
+            <div className="flex items-center justify-center h-32 text-muted-foreground">
+              <div className="text-center">
+                <p className="text-sm">Sin desarrolladores asignados</p>
+                <p className="text-xs">Arrastra desarrolladores aquí</p>
               </div>
-            ) : (
-              developers.map(developer => {
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-4 justify-center">
+              {developers.map(developer => {
                 const pendingInfo = getPendingChangeInfo(developer.id);
                 return (
-                  <DraggableDeveloper
+                  <DeveloperCard
                     key={developer.id}
                     developer={developer}
                     isPending={pendingInfo?.isPending}
@@ -95,9 +95,9 @@ export function ProjectCard({ project }: ProjectCardProps) {
                     pendingToProject={pendingInfo?.toProject}
                   />
                 );
-              })
-            )}
-          </div>
+              })}
+            </div>
+          )}
         </div>
 
         {/* Required skills */}

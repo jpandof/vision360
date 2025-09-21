@@ -34,6 +34,7 @@ interface ProjectStore {
   developers: Developer[];
   pendingChanges: PendingChange[];
   isConfirmationOpen: boolean;
+  showSimpleView: boolean;
 
   // Actions
   addProject: (project: Omit<Project, 'id'>) => void;
@@ -55,6 +56,10 @@ interface ProjectStore {
   cancelChanges: () => void;
   openConfirmation: () => void;
   closeConfirmation: () => void;
+
+  // View actions
+  setShowSimpleView: (value: boolean) => void;
+  getShowSimpleView: () => boolean;
 
   // Helpers
   getProjectDevelopers: (projectId: string) => Developer[];
@@ -134,6 +139,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
 
   pendingChanges: [],
   isConfirmationOpen: false,
+  showSimpleView: true,
 
   // Actions
   addProject: projectData => {
@@ -280,6 +286,9 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
   closeConfirmation: () => {
     set({ isConfirmationOpen: false });
   },
+
+  setShowSimpleView: (value: boolean) => set({ showSimpleView: value }),
+  getShowSimpleView: () => get().showSimpleView,
 
   // Helpers
   getProjectDevelopers: projectId => {
