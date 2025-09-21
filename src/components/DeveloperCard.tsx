@@ -26,8 +26,12 @@ export function DeveloperCard({
       },
     });
 
+  // Mejorar el estilo del transform para evitar retrasos
   const style = transform
-    ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` }
+    ? {
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        zIndex: 9999,
+      }
     : undefined;
 
   const commonProps = {

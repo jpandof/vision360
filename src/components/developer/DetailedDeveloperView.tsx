@@ -135,8 +135,8 @@ export function DetailedDeveloperView({
       {...listeners}
       {...attributes}
       className={cn(
-        'relative group cursor-grab active:cursor-grabbing transition-all duration-200 hover:scale-105 p-3 rounded-md text-gray-700 w-64',
-        isDragging && 'shadow-xl scale-110 z-50',
+        'relative group cursor-grab active:cursor-grabbing transition-opacity duration-200 p-3 rounded-md text-gray-700 w-64',
+        isDragging && 'opacity-50',
         isPending && 'ring-4 ring-orange-400',
         getPerformanceBorderStyle(developer.performance)
       )}

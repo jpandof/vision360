@@ -136,8 +136,8 @@ export function SimpleDeveloperView({
           {...listeners}
           {...attributes}
           className={cn(
-            'relative cursor-grab active:cursor-grabbing transition-all duration-200 hover:scale-105 flex flex-col items-center p-1',
-            isDragging && 'shadow-xl scale-110 z-50',
+            'relative cursor-grab active:cursor-grabbing transition-opacity duration-200 flex flex-col items-center p-1',
+            isDragging && 'opacity-50',
             isPending && 'ring-2 ring-orange-400'
           )}
         >
