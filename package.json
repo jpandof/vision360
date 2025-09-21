@@ -48,6 +48,7 @@
     "*.{js,ts,tsx,jsx,json,css,md}": [
       "prettier --write",
       "eslint --fix"
-    ]
+    ],
+    "src/components/ui/**/*.{js,ts,tsx,jsx}": "echo 'Skipping shadcn/ui auto-generated component'"
   }
 }
